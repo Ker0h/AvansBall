@@ -73,24 +73,23 @@ const addProduct = (req, res) => {
 };
 
 const updateProduct = (req, res) => {
-  const name = req.params.name || '';
-  const newName = req.body.name || '';
+  const id = req.body.id || '';
+  const name = req.body.name || '';
   const amount = req.body.amount || 0;
   const category = req.body.category || '';
   const price = req.body.price || 0;
 
-  if (name === '') {
+  if (id === '') {
     const err = Errors.PreconditionFailed();
     res.status(err.code).json(err).end();
   }  
 
-  WriteModel.findOneAndUpdate({name: name}, 
-    {name: newName, amount: amount, category: category, price: price},
+  WriteModel.findByIdAndUpdate(id, {name: name, amount: amount, category: category, price: price},
     (err, stock) => {
       if (err) {
         res.json(err).end()
     } else {
-        const productUpdated = new ProductUpdated(name, newName, amount, category, price)
+        const productUpdated = new ProductUpdated(id, name, amount, category, price)
         AMQP.sendToBus(productUpdated.constructor.name, productUpdated);
 
         res.status(204).json(stock).end()
@@ -99,19 +98,18 @@ const updateProduct = (req, res) => {
 };
 
 const deleteProduct = (req, res) => {
-  const name = req.params.name || ''
+  const id = req.body.id || ''
 
-  if (name === '') {
+  if (id === '') {
     const err = Errors.PreconditionFailed();
     res.status(err.code).json(err).end();
   };
 
-  WriteModel.findOneAndDelete({name: name}, 
-    (err, stock) => {
+  WriteModel.findByIdAndDelete(id, (err, stock) => {
     if (err) {
         res.json(err).end()
     } else {
-        const productDeleted = new ProductDeleted(name)
+        const productDeleted = new ProductDeleted(id)
         AMQP.sendToBus(productDeleted.constructor.name, productDeleted);
 
         res.status(204).json(stock).end()

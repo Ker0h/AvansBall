@@ -1,6 +1,6 @@
 class ProductDeleted {
-  constructor(name) {
-    this.name = name;
+  constructor(id) {
+    this.id = id;
   }
 }
 

@@ -1,7 +1,7 @@
 class ProductUpdated {
-  constructor(name, newName, amount, category, price) {
+  constructor(id, name, amount, category, price) {
+    this.id = id;
     this.name = name;
-    this.newName = newName;
     this.amount = amount;
     this.category = category;
     this.price = price;
