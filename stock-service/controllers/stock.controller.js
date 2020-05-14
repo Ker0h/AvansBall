@@ -2,6 +2,7 @@ const Stock = require('../models/schemas/stock.schema');
 const Errors = require('../errorhandling/errorcodes');
 const ProductAdded = require('../events/productAdded');
 const ProductUpdated = require('../events/productUpdated');
+const ProductDeleted = require('../events/productDeleted')
 const AMQP = require('../utils/amqp.util');
 
 const ReadModel = Stock.readStock;
@@ -89,13 +90,35 @@ const updateProduct = (req, res) => {
       if (err) {
         res.json(err).end()
     } else {
-        const productUpdated = new ProductUpdated(name, newName, amount, category, price)
+        const productUpdated = new ProductDeleted(name)
+        AMQP.sendToBus(productDeleted.constructor.name, productDeleted);
+
+        res.status(204).json(stock).end()
+    }
+  });
+};
+
+const deleteProduct = (req, res) => {
+  const name = req.params.name || ''
+
+  if (name === '') {
+    const err = Errors.PreconditionFailed();
+    res.status(err.code).json(err).end();
+  };
+
+  WriteModel.findOneAndDelete({name: name}, 
+    (err, stock) => {
+    if (err) {
+        res.json(err).end()
+    } else {
+        const productDeleted = new ProductUpdated(name, newName, amount, category, price)
         AMQP.sendToBus(productUpdated.constructor.name, productUpdated);
 
         res.status(204).json(stock).end()
     }
-    });
-};
+ 
+  })
+}
 
 module.exports = {
   getStock,
