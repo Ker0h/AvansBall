@@ -1,0 +1,9 @@
+{
+    "host": "127.0.0.1",
+    "user": "root",
+    "password": "example",
+    "writeDb": "SupplierWrite",
+    "readDb": "SupplierRead",
+    "appHost": "localhost",
+    "appPort": "8080"
+}
