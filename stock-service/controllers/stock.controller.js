@@ -90,12 +90,12 @@ const updateProduct = (req, res) => {
       if (err) {
         res.json(err).end()
     } else {
-        const productUpdated = new ProductDeleted(name)
-        AMQP.sendToBus(productDeleted.constructor.name, productDeleted);
+        const productUpdated = new ProductUpdated(name, newName, amount, category, price)
+        AMQP.sendToBus(productUpdated.constructor.name, productUpdated);
 
         res.status(204).json(stock).end()
     }
-  });
+    });
 };
 
 const deleteProduct = (req, res) => {
@@ -111,8 +111,8 @@ const deleteProduct = (req, res) => {
     if (err) {
         res.json(err).end()
     } else {
-        const productDeleted = new ProductUpdated(name, newName, amount, category, price)
-        AMQP.sendToBus(productUpdated.constructor.name, productUpdated);
+        const productDeleted = new ProductDeleted(name)
+        AMQP.sendToBus(productDeleted.constructor.name, productDeleted);
 
         res.status(204).json(stock).end()
     }
@@ -124,5 +124,6 @@ module.exports = {
   getStock,
   getStockByName,
   addProduct,
-  updateProduct
+  updateProduct,
+  deleteProduct
 };
