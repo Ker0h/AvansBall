@@ -8,6 +8,9 @@ const denormalize = (msg) => {
   
   if(denormalized.event === "ProductDeleted") {
     ReadModel.findOneAndDelete({name: name})
+    .then((stock) => {
+      console.log("Deleted read model: " + stock)
+    })
   }
   
   const amount = denormalized.data.amount;
@@ -22,6 +25,9 @@ const denormalize = (msg) => {
   
   if(denormalized.event === "ProductUpdated") {
     ReadModel.findOneAndUpdate({name: name}, {name: denormalized.data.newName, amount: amount, category: category, price: price})
+    .then((stock) => {
+      console.log("Updated read model: " + stock)
+    })
   }
 }
 
