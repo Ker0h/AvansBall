@@ -21,13 +21,12 @@ class ProductWriteRepository {
                 title, category, price
             })
 
-            console.log(product)
             product.save()
                 .then(() => {
-                    resolve({ status: 201, message: "Supplier product created.", product })
+                    resolve({ status: 201, message: " [+] Supplier product created.", product })
                 })
                 .catch(() => {
-                    reject({ status: 500, message: " [*] ERROR: Product not created." })
+                    reject({ status: 500, message: " [-] ERROR: Product not created." })
                 })
         })
     }
@@ -36,10 +35,10 @@ class ProductWriteRepository {
         return new Promise((resolve, reject) => {
             ProductWrite.findOneAndUpdate({ _id: productId }, {
                 title, category, price
-            }).then((product) => {
-                resolve({ status: 200, message: "Supplier product updated", product })
+            }).then(() => {
+                resolve({ status: 200, message: " [+] Supplier product updated" })
             }).catch(() => {
-                reject({ status: 500, message: " [*] ERROR: Product not updated" })
+                reject({ status: 500, message: " [-] ERROR: Product not updated" })
             })
         })
     }
