@@ -1,5 +1,6 @@
 class SupplierProductCreated {
-    constructor(title, price, category) {
+    constructor(id, title, price, category) {
+        this.productId = id
         this.title = title
         this.price = price
         this.category = category

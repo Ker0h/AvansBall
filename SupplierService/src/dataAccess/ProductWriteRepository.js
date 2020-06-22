@@ -15,19 +15,32 @@ class ProductWriteRepository {
         })
     }
 
-    static createProduct(title, price) {
+    static createProduct(title, price, category) {
         return new Promise((resolve, reject) => {
             const product = new ProductWrite({
-                title, price
+                title, category, price
             })
 
+            console.log(product)
             product.save()
                 .then(() => {
                     resolve({ status: 201, message: "Supplier product created.", product })
                 })
                 .catch(() => {
-                    resolve({ status: 500, message: " [*] ERROR: Product not created." })
+                    reject({ status: 500, message: " [*] ERROR: Product not created." })
                 })
+        })
+    }
+
+    static updateProduct(productId, title, price, category) {
+        return new Promise((resolve, reject) => {
+            ProductWrite.findOneAndUpdate({ _id: productId }, {
+                title, category, price
+            }).then((product) => {
+                resolve({ status: 200, message: "Supplier product updated", product })
+            }).catch(() => {
+                reject({ status: 500, message: " [*] ERROR: Product not updated" })
+            })
         })
     }
 

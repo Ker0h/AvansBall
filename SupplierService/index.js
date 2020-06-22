@@ -3,18 +3,8 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const config = require('./config.json')
 const app = express()
-const DeNormalizer = require('./src/routes/de_normalizer')
+const amqpUtils = require('./src/utils/amqp.util')
 mongoose.set('useFindAndModify', false)
-
-/**
- * Create connection to read database in mongo
- */
-// const readDb = mongoose.connect('mongodb://' + config.host + '/' + config.readDb, { useNewUrlParser: true })
-// readDb.connection.once('open', () => {
-//     console.log(' [+] Message: The ' + config.readDb + ' database is connected')
-// }).on('error', (error) => {
-//     console.warn(' [*] WARNING: ', error)
-// })
 
 // Returns middleware that only parses urlencode bodies.
 app.use(bodyParser.urlencoded({
@@ -31,7 +21,6 @@ app.listen(config.appPort, () => {
     console.log(' [+] Message: App listening on: ' + config.appHost + ':' + config.appPort)
 })
 
-const de_normalizer = new DeNormalizer()
-de_normalizer.listen()
+amqpUtils.listenToBus()
 
 module.exports = app

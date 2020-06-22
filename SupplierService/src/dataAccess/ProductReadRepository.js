@@ -16,20 +16,31 @@ class ProductReadRepository {
     }
 
     static createProduct(product) {
-        return new Promise((resolve, reject) => {
-            const newProduct = new ProductRead({
-                title: product.title,
-                price: product.price,
-                category: product.category
-            })
+        const newProduct = new ProductRead({
+            productId: product.productId,
+            title: product.title,
+            category: product.category,
+            price: product.price
+        })
 
-            newProduct.save()
-                .then(() => {
-                    resolve({ status: 201, message: "Product created in read database", "supplierProduct": newProduct })
-                })
-                .catch(() => {
-                    resolve({ status: 500, message: " [*] ERROR: Product not created." })
-                })
+        newProduct.save()
+            .then(() => {
+                console.log("Product saved in read db")
+            })
+            .catch((e) => {
+                console.log(e)
+                console.log("Oeps het ging fout bij het opslaan in de read db")
+            })
+    }
+
+    static updateProduct(product) {
+        console.log(product)
+        ProductRead.findOneAndUpdate({ productId: product._id }, {
+            title: product.title, category: product.category, price: product.price
+        }).then(() => {
+            console.log("Product updated in read db")
+        }).catch(() => {
+            console.log("oeps toch niet")
         })
     }
 
