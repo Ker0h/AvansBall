@@ -7,7 +7,7 @@ const config = require('../../config.json')
 class ReadDbConnection {
 
     static connectionFactory() {
-        const readDb = mongoose.createConnection('mongodb://' + config.host + '/' + config.readDb, { useNewUrlParser: true, useUnifiedTopology: true })
+        const readDb = mongoose.createConnection('mongodb://' + config.host + ':' + config.port + '/' + config.readDb, { useNewUrlParser: true, useUnifiedTopology: true })
         readDb.once('open', () => {
             console.log(' [+] Message: The ' + config.readDb + ' database is connected')
         }).on('error', (error) => {
