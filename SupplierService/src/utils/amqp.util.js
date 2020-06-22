@@ -20,7 +20,7 @@ class AmqpUtil {
                 })
 
                 channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)))
-                console.log(" [x] Sent %s", message);
+                console.log(" [x] Sent %s", message.event);
             })
 
             setTimeout(function () {
@@ -43,7 +43,7 @@ class AmqpUtil {
 
                 console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queueName);
                 channel.consume(queueName, (message) => {
-                    console.log(" [+] Received: " + JSON.parse(message.content))
+                    console.log(" [+] Received: " + JSON.parse(message.content).event)
                     var deNormalizer = new DeNormalizer()
                     deNormalizer.insertIntoRead(JSON.parse(message.content))
                 }, {
