@@ -7,15 +7,15 @@ const SupplierProductUpdated = require('../events/ProductUpdated')
 const ProductWriteRepository = require('../dataAccess/ProductWriteRepository');
 const ProductReadRepository = require('../dataAccess/ProductReadRepository');
 
-// router.get('/', (req, res) => {
-//     ProductReadRepository.getAllProducts()
-//         .then((repoObject) => {
-//             res.status(repoObject.status).json(repoObject);
-//         })
-//         .catch((repoObject) => {
-//             res.status(repoObject.status).json(repoObject);
-//         });
-// });
+router.get('/', (req, res) => {
+    ProductReadRepository.getAllProducts()
+        .then((repoObject) => {
+            res.status(repoObject.status).json(repoObject);
+        })
+        .catch((repoObject) => {
+            res.status(repoObject.status).json(repoObject);
+        });
+});
 
 router.post('/', (req, res) => {
     const title = req.body.title || ''
