@@ -40,7 +40,7 @@ class ProductReadRepository {
     static updateProduct(product) {
         ProductRead.findOneAndUpdate({ productId: product.productId }, {
             title: product.title, category: product.category, price: product.price
-        }).then(() => console.log(" [+]Product updated in read db."))
+        }).then(() => console.log(" [+] Product updated in read db."))
             .catch(() => console.log(" [-] Oeps het ging fout bij het updaten in de read db."))
     }
 
@@ -49,12 +49,10 @@ class ProductReadRepository {
      * @param {String} productId The mongoDB ObjectID("") of the product.
      * @param {String} title The new name of the product.
      */
-    static updateProductName(productId, title) {
-        return new Promise((resolve, reject) => {
-            ProductRead.findOneAndUpdate({ _id: productId }, { title: title })
-                .then(() => resolve({ status: 200, message: " [+] Supplier product title updated." }))
-                .catch(() => reject({ status: 500, message: " [-] ERROR: Supplier product name is not updated in the read database." }))
-        })
+    static updateProductTitle(productId, title) {
+        ProductRead.findOneAndUpdate({ productId: productId }, { title: title })
+            .then(() => console.log(" [+] Supplier product title updated"))
+            .catch(() => console.log(" [-] ERROR: Supplier product name is not updated in the read database."))
     }
 
     /**
@@ -63,11 +61,9 @@ class ProductReadRepository {
      * @param {String} category The new category of the product.
      */
     static updateProductCategory(productId, category) {
-        return new Promise((resolve, reject) => {
-            ProductRead.findOneAndUpdate({ _id: productId }, { category: category })
-                .then(() => resolve({ status: 200, message: " [+] Supplier product category updated." }))
-                .catch(() => reject({ status: 500, message: " [-] ERROR: Supplier product category is not updated in the read database." }))
-        })
+        ProductRead.findOneAndUpdate({ productId: productId }, { category: category })
+            .then(() => console.log(" [+] Supplier product category updated."))
+            .catch(() => console.log(" [-] ERROR: Supplier product category is not updated in the read database."))
     }
 
     /**
@@ -76,11 +72,9 @@ class ProductReadRepository {
      * @param {Number} price The new price of the product.
      */
     static updateProductPrice(productId, price) {
-        return new Promise((resolve, reject) => {
-            ProductRead.findOneAndUpdate({ _id: productId }, { price: price })
-                .then(() => resolve({ status: 200, message: " [+] Supplier product price updated." }))
-                .catch(() => reject({ status: 500, message: " [-] ERROR: Supplier product price is not updated in the read database." }))
-        })
+        ProductRead.findOneAndUpdate({ productId: productId }, { price: price })
+            .then(() => console.log(" [+] Supplier product price updated."))
+            .catch(() => console.log(" [-] ERROR: Supplier product price is not updated in the read database."))
     }
 
     /**
@@ -89,8 +83,8 @@ class ProductReadRepository {
      */
     static deleteProduct(productId) {
         ProductRead.findOneAndDelete({ productId: productId })
-            .then(() => resolve({ status: 200, message: " [+] Supplier product deleted in Read database." }))
-            .catch(() => reject({ status: 500, message: " [-] ERROR: Supplier product is not deleted from read database." }))
+            .then(() => console.log(" [+] Supplier product deleted in Read database."))
+            .catch(() => console.log(" [-] ERROR: Supplier product is not deleted from read database."))
     }
 
 }

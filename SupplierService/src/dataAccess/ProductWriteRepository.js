@@ -55,7 +55,7 @@ class ProductWriteRepository {
      * @param {String} productId The mongoDB ObjectID("") of the product.
      * @param {String} title The new name of the product.
      */
-    static updateProductName(productId, title) {
+    static updateProductTitle(productId, title) {
         return new Promise((resolve, reject) => {
             ProductWrite.findOneAndUpdate({ _id: productId }, { title: title })
                 .then(() => resolve({ status: 200, message: " [+] Supplier product title updated." }))
@@ -79,7 +79,7 @@ class ProductWriteRepository {
     /**
      * Only update the price of the product.
      * @param {String} productId The mongoDB ObjectID("") of the product. 
-     * @param {*} price The new price of the product.
+     * @param {Number} price The new price of the product.
      */
     static updateProductPrice(productId, price) {
         return new Promise((resolve, reject) => {

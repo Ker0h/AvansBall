@@ -6,6 +6,9 @@ const SupplierProductUpdated = require('../events/SupplierProductUpdated')
 const ProductWriteRepository = require('../dataAccess/ProductWriteRepository')
 const ProductReadRepository = require('../dataAccess/ProductReadRepository')
 const SupplierProductDeleted = require("../events/SupplierProductDeleted")
+const SupplierProductTitleUpdated = require("../events/SupplierProductTitleUpdated")
+const SupplierProductCategoryUpdated = require("../events/SupplierProductCategoryUpdated")
+const SupplierProductPriceUpdated = require("../events/SupplierProductPriceUpdated")
 
 /**
  * HTTP GET
@@ -52,6 +55,48 @@ router.put('/:id', (req, res) => {
     ProductWriteRepository.updateProduct(productId, title, price, category)
         .then((repoObject) => {
             amqpUtils.sendToBus(new SupplierProductUpdated(productId, title, price, category))
+            res.status(repoObject.status).json(repoObject)
+        })
+        .catch((repoObject) => res.status(repoObject.status).json(repoObject))
+})
+
+router.patch('/:id/title', (req, res) => {
+    const productId = req.params.id || ''
+    const title = req.body.title || ''
+
+    ProductWriteRepository.updateProductTitle(productId, title)
+        .then((repoObject) => {
+            amqpUtils.sendToBus(
+                new SupplierProductTitleUpdated(productId, title)
+            )
+            res.status(repoObject.status).json(repoObject)
+        })
+        .catch((repoObject) => res.status(repoObject.status).json(repoObject))
+})
+
+router.patch('/:id/category', (req, res) => {
+    const productId = req.params.id || ''
+    const category = req.body.category || ''
+
+    ProductWriteRepository.updateProductCategory(productId, category)
+        .then((repoObject) => {
+            amqpUtils.sendToBus(
+                new SupplierProductCategoryUpdated(productId, category)
+            )
+            res.status(repoObject.status).json(repoObject)
+        })
+        .catch((repoObject) => res.status(repoObject.status).json(repoObject))
+})
+
+router.patch('/:id/price', (req, res) => {
+    const productId = req.params.id || ''
+    const price = req.body.price || ''
+
+    ProductWriteRepository.updateProductPrice(productId, price)
+        .then((repoObject) => {
+            amqpUtils.sendToBus(
+                new SupplierProductPriceUpdated(productId, price)
+            )
             res.status(repoObject.status).json(repoObject)
         })
         .catch((repoObject) => res.status(repoObject.status).json(repoObject))
