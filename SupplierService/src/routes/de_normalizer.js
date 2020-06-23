@@ -9,6 +9,10 @@ class DeNormalizer {
         if (supplierProduct.event === "SupplierProductUpdated") {
             ProductReadRepository.updateProduct(supplierProduct.supplierProduct)
         }
+
+        if (supplierProduct.event === "SupplierProductDeleted") {
+            ProductReadRepository.deleteProduct(supplierProduct.supplierProduct.productId)
+        }
     }
 }
 

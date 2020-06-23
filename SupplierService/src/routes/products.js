@@ -1,10 +1,11 @@
-const express = require("express");
-const router = express.Router();
+const express = require("express")
+const router = express.Router()
 const amqpUtils = require('../utils/amqp.util')
-const SupplierProductCreated = require('../events/ProductCreated')
-const SupplierProductUpdated = require('../events/ProductUpdated')
-const ProductWriteRepository = require('../dataAccess/ProductWriteRepository');
-const ProductReadRepository = require('../dataAccess/ProductReadRepository');
+const SupplierProductCreated = require('../events/SupplierProductCreated')
+const SupplierProductUpdated = require('../events/SupplierProductUpdated')
+const ProductWriteRepository = require('../dataAccess/ProductWriteRepository')
+const ProductReadRepository = require('../dataAccess/ProductReadRepository')
+const SupplierProductDeleted = require("../events/SupplierProductDeleted")
 
 /**
  * HTTP GET
@@ -13,12 +14,8 @@ const ProductReadRepository = require('../dataAccess/ProductReadRepository');
  */
 router.get('/', (req, res) => {
     ProductReadRepository.getAllProducts()
-        .then((repoObject) => {
-            res.status(repoObject.status).json(repoObject);
-        })
-        .catch((repoObject) => {
-            res.status(repoObject.status).json(repoObject);
-        });
+        .then((repoObject) => res.status(repoObject.status).json(repoObject))
+        .catch((repoObject) => res.status(repoObject.status).json(repoObject))
 });
 
 /**
@@ -28,18 +25,17 @@ router.get('/', (req, res) => {
  */
 router.post('/', (req, res) => {
     const title = req.body.title || ''
-    const price = req.body.price || ''
+    const price = req.body.price || 0
     const category = req.body.category || ''
 
     ProductWriteRepository.createProduct(title, price, category)
         .then((repoObject) => {
-            var supplierProduct = new SupplierProductCreated(repoObject.product._id, repoObject.product.title, repoObject.product.price, repoObject.product.category)
-            amqpUtils.sendToBus(supplierProduct)
+            amqpUtils.sendToBus(
+                new SupplierProductCreated(repoObject.product._id, repoObject.product.title, repoObject.product.price, repoObject.product.category)
+            )
             res.status(repoObject.status).json(repoObject)
         })
-        .catch((repoObject) => {
-            res.status(repoObject.status).json(repoObject)
-        })
+        .catch((repoObject) => res.status(repoObject.status).json(repoObject))
 })
 
 /**
@@ -50,18 +46,26 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
     const productId = req.params.id || ''
     const title = req.body.title || ''
-    const price = req.body.price || ''
+    const price = req.body.price || 0
     const category = req.body.category || ''
 
     ProductWriteRepository.updateProduct(productId, title, price, category)
         .then((repoObject) => {
-            var supplierProduct = new SupplierProductUpdated(productId, title, price, category)
-            amqpUtils.sendToBus(supplierProduct)
+            amqpUtils.sendToBus(new SupplierProductUpdated(productId, title, price, category))
             res.status(repoObject.status).json(repoObject)
         })
-        .catch((repoObject) => {
+        .catch((repoObject) => res.status(repoObject.status).json(repoObject))
+})
+
+router.delete('/:id', (req, res) => {
+    const productId = req.params.id || ''
+
+    ProductWriteRepository.deleteProduct(productId)
+        .then((repoObject) => {
+            amqpUtils.sendToBus(new SupplierProductDeleted(productId))
             res.status(repoObject.status).json(repoObject)
         })
+        .catch((repoObject) => res.status(repoObject.status).json(repoObject))
 })
 
 module.exports = router
