@@ -1,31 +1,31 @@
 const ProductReadRepository = require('../dataAccess/ProductReadRepository')
+const Events = require('../utils/Events')
 
 class DeNormalizer {
     insertIntoRead(supplierProduct) {
         const product = supplierProduct.supplierProduct
 
-        if (supplierProduct.event === "SupplierProductCreated") {
-            ProductReadRepository.createProduct(product)
-        }
-
-        if (supplierProduct.event === "SupplierProductUpdated") {
-            ProductReadRepository.updateProduct(product)
-        }
-
-        if (supplierProduct.event === "SupplierProductDeleted") {
-            ProductReadRepository.deleteProduct(product.productId)
-        }
-
-        if (supplierProduct.event === "SupplierProductTitleUpdated") {
-            ProductReadRepository.updateProductTitle(product.productId, product.title)
-        }
-
-        if (supplierProduct.event === "SupplierProductCategoryUpdated") {
-            ProductReadRepository.updateProductCategory(product.productId, product.category)
-        }
-
-        if (supplierProduct.event === "SupplierProductPriceUpdated") {
-            ProductReadRepository.updateProductPrice(product.productId, product.price)
+        switch (supplierProduct.event) {
+            case Events.SUPPLIER_PRODUCT_CREATED:
+                ProductReadRepository.createProduct(product)
+                break
+            case Events.SUPPLIER_PRODUCT_UPDATED:
+                ProductReadRepository.updateProduct(product)
+                break
+            case Events.SUPPLIER_PRODUCT_DELETED:
+                ProductReadRepository.deleteProduct(product.productId)
+                break
+            case Events.SUPPLIER_PRODUCT_TITLE_UPDATED:
+                ProductReadRepository.updateProductTitle(product.productId, product.title)
+                break
+            case Events.SUPPLIER_PRODUCT_CATEGORY_UPDATED:
+                ProductReadRepository.updateProductCategory(product.productId, product.category)
+                break
+            case Events.SUPPLIER_PRODUCT_PRICE_UPDATED:
+                ProductReadRepository.updateProductPrice(product.productId, product.price)
+                break
+            default:
+                console.warn(" [-] ERROR: Event does not exist.")
         }
     }
 }
