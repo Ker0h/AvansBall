@@ -5,7 +5,9 @@ const Schema = mongoose.Schema
 const ProductWriteSchema = new Schema({
     title: String,
     category: String,
-    price: Number
+    price: Number,
+    isSupplierProduct: Boolean,
+    supplier: String
 })
 
 const ProductWrite = writeDb.model('product_write', ProductWriteSchema)

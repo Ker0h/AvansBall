@@ -1,0 +1,10 @@
+{
+  "host": "localhost",
+  "port": "27018",
+  "user": "root",
+  "password": "example",
+  "writeDb": "BalProductWrite",
+  "readDb": "BalProductRead",
+  "appHost": "localhost",
+  "appPort": "8080"
+}

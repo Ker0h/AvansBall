@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({
 // and only looks at requests where the Content-Type header matches the type option.
 app.use(bodyParser.json());
 
-app.use('/api/supplier/products', require('./src/routes/products'))
+app.use('/api/bal/products', require('./src/routes/products'))
 
 app.listen(config.appPort, () => {
     console.log(' [+] Message: App listening on: ' + config.appHost + ':' + config.appPort)

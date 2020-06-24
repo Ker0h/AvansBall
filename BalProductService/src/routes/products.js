@@ -1,14 +1,16 @@
 const express = require("express")
 const router = express.Router()
 const amqpUtils = require('../utils/amqp.util')
-const SupplierProductCreated = require('../events/SupplierProductCreated')
-const SupplierProductUpdated = require('../events/SupplierProductUpdated')
+
 const ProductWriteRepository = require('../dataAccess/ProductWriteRepository')
 const ProductReadRepository = require('../dataAccess/ProductReadRepository')
-const SupplierProductDeleted = require("../events/SupplierProductDeleted")
-const SupplierProductTitleUpdated = require("../events/SupplierProductTitleUpdated")
-const SupplierProductCategoryUpdated = require("../events/SupplierProductCategoryUpdated")
-const SupplierProductPriceUpdated = require("../events/SupplierProductPriceUpdated")
+
+const BalProductCreated = require('../events/BalProductCreated')
+const BalProductUpdated = require('../events/BalProductUpdated')
+const BalProductDeleted = require("../events/BalProductDeleted")
+const BalProductTitleUpdated = require("../events/BalProductTitleUpdated")
+const BalProductCategoryUpdated = require("../events/BalProductCategoryUpdated")
+const BalProductPriceUpdated = require("../events/BalProductPriceUpdated")
 
 /**
  * HTTP GET
@@ -24,17 +26,19 @@ router.get('/', (req, res) => {
 /**
  * HTTP POST
  * DB: WRITE
- * Create a supplier product. After the product is created the product is sent to the message bus with event ProductCreated.
+ * Create a product. After the product is created the product is sent to the message bus with event ProductCreated.
  */
 router.post('/', (req, res) => {
     const title = req.body.title || ''
     const price = req.body.price || 0
     const category = req.body.category || ''
+    const isSupplierProduct = false
+    const supplier = "Bal"
 
-    ProductWriteRepository.createProduct(title, price, category)
+    ProductWriteRepository.createProduct(title, price, category, isSupplierProduct, supplier)
         .then((repoObject) => {
             amqpUtils.sendToBus(
-                new SupplierProductCreated(repoObject.product._id, repoObject.product.title, repoObject.product.price, repoObject.product.category)
+                new BalProductCreated(repoObject.product._id, repoObject.product.title, repoObject.product.price, repoObject.product.category, repoObject.product.isSupplierProduct, repoObject.product.supplier)
             )
             res.status(repoObject.status).json(repoObject)
         })
@@ -54,7 +58,7 @@ router.put('/:id', (req, res) => {
 
     ProductWriteRepository.updateProduct(productId, title, price, category)
         .then((repoObject) => {
-            amqpUtils.sendToBus(new SupplierProductUpdated(productId, title, price, category))
+            amqpUtils.sendToBus(new BalProductUpdated(productId, title, price, category))
             res.status(repoObject.status).json(repoObject)
         })
         .catch((repoObject) => res.status(repoObject.status).json(repoObject))
@@ -67,7 +71,7 @@ router.patch('/:id/title', (req, res) => {
     ProductWriteRepository.updateProductTitle(productId, title)
         .then((repoObject) => {
             amqpUtils.sendToBus(
-                new SupplierProductTitleUpdated(productId, title)
+                new BalProductTitleUpdated(productId, title)
             )
             res.status(repoObject.status).json(repoObject)
         })
@@ -81,7 +85,7 @@ router.patch('/:id/category', (req, res) => {
     ProductWriteRepository.updateProductCategory(productId, category)
         .then((repoObject) => {
             amqpUtils.sendToBus(
-                new SupplierProductCategoryUpdated(productId, category)
+                new BalProductCategoryUpdated(productId, category)
             )
             res.status(repoObject.status).json(repoObject)
         })
@@ -95,7 +99,7 @@ router.patch('/:id/price', (req, res) => {
     ProductWriteRepository.updateProductPrice(productId, price)
         .then((repoObject) => {
             amqpUtils.sendToBus(
-                new SupplierProductPriceUpdated(productId, price)
+                new BalProductPriceUpdated(productId, price)
             )
             res.status(repoObject.status).json(repoObject)
         })
@@ -107,7 +111,7 @@ router.delete('/:id', (req, res) => {
 
     ProductWriteRepository.deleteProduct(productId)
         .then((repoObject) => {
-            amqpUtils.sendToBus(new SupplierProductDeleted(productId))
+            amqpUtils.sendToBus(new BalProductDeleted(productId))
             res.status(repoObject.status).json(repoObject)
         })
         .catch((repoObject) => res.status(repoObject.status).json(repoObject))

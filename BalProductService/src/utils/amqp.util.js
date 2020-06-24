@@ -3,17 +3,17 @@ const DeNormalizer = require('../routes/de_normalizer')
 
 class AmqpUtil {
 
-    static sendToBus(supplierProduct) {
+    static sendToBus(balProduct) {
         amqp.connect('amqp://localhost', (err, connection) => {
             if (err) console.warn(err)
 
             connection.createChannel((channelError, channel) => {
                 if (channelError) console.log(channelError)
 
-                let queueName = "supplierProducts"
+                let queueName = "balProducts"
                 let message = {
-                    "event": supplierProduct.constructor.name,
-                    "supplierProduct": supplierProduct
+                    "event": balProduct.constructor.name,
+                    "balProduct": balProduct
                 }
                 channel.assertQueue(queueName, {
                     durable: false
@@ -36,7 +36,7 @@ class AmqpUtil {
             connection.createChannel((channelError, channel) => {
                 if (channelError) console.warn(channelError)
 
-                const queueName = "supplierProducts"
+                const queueName = "balProducts"
                 channel.assertQueue(queueName, {
                     durable: false
                 })

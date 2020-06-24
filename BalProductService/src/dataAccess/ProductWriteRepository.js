@@ -21,15 +21,17 @@ class ProductWriteRepository {
      * @param {String} title Name of the product.
      * @param {Number} price Price of the product, can be a decimal.
      * @param {String} category Product category of the product.
+     * @param isSupplierProduct
+     * @param supplier
      */
-    static createProduct(title, price, category) {
+    static createProduct(title, price, category, isSupplierProduct, supplier) {
         return new Promise((resolve, reject) => {
             const product = new ProductWrite({
-                title, category, price
+                title, category, price, isSupplierProduct, supplier
             })
 
             product.save()
-                .then(() => resolve({ status: 201, message: " [+] Supplier product created.", product }))
+                .then(() => resolve({ status: 201, message: " [+] Product product created.", product }))
                 .catch(() => reject({ status: 500, message: " [-] ERROR: Product not created." }))
         })
     }
@@ -45,7 +47,7 @@ class ProductWriteRepository {
         return new Promise((resolve, reject) => {
             ProductWrite.findOneAndUpdate({ _id: productId }, {
                 title, category, price
-            }).then(() => resolve({ status: 200, message: " [+] Supplier product updated." }))
+            }).then(() => resolve({ status: 200, message: " [+] Product updated." }))
                 .catch(() => reject({ status: 500, message: " [-] ERROR: Product not updated." }))
         })
     }
@@ -58,8 +60,8 @@ class ProductWriteRepository {
     static updateProductTitle(productId, title) {
         return new Promise((resolve, reject) => {
             ProductWrite.findOneAndUpdate({ _id: productId }, { title: title })
-                .then(() => resolve({ status: 200, message: " [+] Supplier product title updated." }))
-                .catch(() => reject({ status: 500, message: " [-] ERROR: Supplier product name is not updated." }))
+                .then(() => resolve({ status: 200, message: " [+] Product title updated." }))
+                .catch(() => reject({ status: 500, message: " [-] ERROR: Product name is not updated." }))
         })
     }
 
@@ -71,8 +73,8 @@ class ProductWriteRepository {
     static updateProductCategory(productId, category) {
         return new Promise((resolve, reject) => {
             ProductWrite.findOneAndUpdate({ _id: productId }, { category: category })
-                .then(() => resolve({ status: 200, message: " [+] Supplier product category updated." }))
-                .catch(() => reject({ status: 500, message: " [-] ERROR: Supplier product category is not updated." }))
+                .then(() => resolve({ status: 200, message: " [+] Product category updated." }))
+                .catch(() => reject({ status: 500, message: " [-] ERROR: Product category is not updated." }))
         })
     }
 
@@ -84,8 +86,8 @@ class ProductWriteRepository {
     static updateProductPrice(productId, price) {
         return new Promise((resolve, reject) => {
             ProductWrite.findOneAndUpdate({ _id: productId }, { price: price })
-                .then(() => resolve({ status: 200, message: " [+] Supplier product price updated." }))
-                .catch(() => reject({ status: 500, message: " [-] ERROR: Supplier product price is not updated." }))
+                .then(() => resolve({ status: 200, message: " [+] Product price updated." }))
+                .catch(() => reject({ status: 500, message: " [-] ERROR: Product price is not updated." }))
         })
     }
 
@@ -96,8 +98,8 @@ class ProductWriteRepository {
     static deleteProduct(productId) {
         return new Promise((resolve, reject) => {
             ProductWrite.findOneAndDelete({ _id: productId })
-                .then(() => resolve({ status: 200, message: " [+] Supplier product deleted." }))
-                .catch(() => reject({ status: 500, message: " [-] ERROR: Supplier product not deleted." }))
+                .then(() => resolve({ status: 200, message: " [+] Product deleted." }))
+                .catch(() => reject({ status: 500, message: " [-] ERROR: Product not deleted." }))
         })
     }
 

@@ -1,8 +1,8 @@
-class SupplierProductCategoryUpdated {
+class BalProductCategoryUpdated {
     constructor(productId, category) {
         this.productId = productId
         this.category = category
     }
 }
 
-module.exports = SupplierProductCategoryUpdated
+module.exports = BalProductCategoryUpdated
