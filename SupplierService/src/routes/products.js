@@ -60,6 +60,11 @@ router.put('/:id', (req, res) => {
         .catch((repoObject) => res.status(repoObject.status).json(repoObject))
 })
 
+/**
+ * HTTP PATCH
+ * DB: WRITE
+ * Only update the title of a product.
+ */
 router.patch('/:id/title', (req, res) => {
     const productId = req.params.id || ''
     const title = req.body.title || ''
@@ -74,6 +79,11 @@ router.patch('/:id/title', (req, res) => {
         .catch((repoObject) => res.status(repoObject.status).json(repoObject))
 })
 
+/**
+ * HTTP PATCH
+ * DB: WRITE
+ * Only update the category of a product.
+ */
 router.patch('/:id/category', (req, res) => {
     const productId = req.params.id || ''
     const category = req.body.category || ''
@@ -88,6 +98,11 @@ router.patch('/:id/category', (req, res) => {
         .catch((repoObject) => res.status(repoObject.status).json(repoObject))
 })
 
+/**
+ * HTTP PATCH
+ * DB: WRITE
+ * Only update the price of a product.
+ */
 router.patch('/:id/price', (req, res) => {
     const productId = req.params.id || ''
     const price = req.body.price || ''
@@ -102,6 +117,11 @@ router.patch('/:id/price', (req, res) => {
         .catch((repoObject) => res.status(repoObject.status).json(repoObject))
 })
 
+/**
+ * HTTP DELETE
+ * DB: WRITE
+ * Delete a single product from the write database.
+ */
 router.delete('/:id', (req, res) => {
     const productId = req.params.id || ''
 

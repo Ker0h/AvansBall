@@ -1,4 +1,5 @@
-const ProductRead = require('../schemas/ProductReadSchema');
+const ProductRead = require('../schemas/ProductReadSchema').ProductRead;
+const ApiErrors = require('../errorMessages/Error')
 
 class ProductReadRepository {
 

@@ -11,4 +11,7 @@ const ProductReadSchema = new Schema({
 
 const ProductRead = readDb.model('product_read', ProductReadSchema)
 
-module.exports = ProductRead
+module.exports = {
+    ProductRead,
+    ProductReadSchema
+}

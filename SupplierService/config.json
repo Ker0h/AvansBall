@@ -6,5 +6,8 @@
     "writeDb": "SupplierWrite",
     "readDb": "SupplierRead",
     "appHost": "localhost",
-    "appPort": "8080"
+    "appPort": "8080",
+    "eventStoreHost": "localhost",
+    "eventStorePort": "32768",
+    "eventStoreDB": "SupplierEventStore"
 }
