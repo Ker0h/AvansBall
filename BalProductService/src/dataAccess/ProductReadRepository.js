@@ -1,4 +1,5 @@
-const ProductRead = require('../schemas/ProductReadSchema');
+const ProductRead = require('../schemas/ProductReadSchema').ProductRead
+const ApiErrors = require('../errorMessages/Error')
 
 class ProductReadRepository {
 
@@ -9,6 +10,20 @@ class ProductReadRepository {
         return new Promise((resolve, reject) => {
             ProductRead.find({})
                 .then((products) => resolve({status: 200, products}))
+                .catch(() => {
+                    const notFound = ApiErrors.notFound();
+                    reject({status: notFound.code, error: notFound})
+                });
+        })
+    }
+
+    /**
+     * Get a product from the Read database.
+     */
+    static getAProduct(productId) {
+        return new Promise((resolve, reject) => {
+            ProductRead.findOne({productId: productId})
+                .then((product) => resolve({status: 200, product}))
                 .catch(() => {
                     const notFound = ApiErrors.notFound();
                     reject({status: notFound.code, error: notFound})

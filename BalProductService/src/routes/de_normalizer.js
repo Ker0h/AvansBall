@@ -1,8 +1,11 @@
 const ProductReadRepository = require('../dataAccess/ProductReadRepository')
+const EventStoreRepository = require('../dataAccess/EventStoreRepository')
 
 class DeNormalizer {
     insertIntoRead(balProduct) {
         const product = balProduct.balProduct
+
+        EventStoreRepository.createEvent(balProduct.event, product)
 
         switch (balProduct.event) {
             case "BalProductCreated":
@@ -22,6 +25,8 @@ class DeNormalizer {
                 break;
             case "BalProductPriceUpdated":
                 ProductReadRepository.updateProductPrice(product.productId, product.price)
+                break;
+            default:
                 break;
         }
     }

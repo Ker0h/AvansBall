@@ -55,10 +55,12 @@ router.put('/:id', (req, res) => {
     const title = req.body.title || ''
     const price = req.body.price || 0
     const category = req.body.category || ''
+    const isSupplierProduct = false
+    const supplier = "Bal"
 
-    ProductWriteRepository.updateProduct(productId, title, price, category)
+    ProductWriteRepository.updateProduct(productId, title, price, category, isSupplierProduct, supplier)
         .then((repoObject) => {
-            amqpUtils.sendToBus(new BalProductUpdated(productId, title, price, category))
+            amqpUtils.sendToBus(new BalProductUpdated(productId, title, price, category, isSupplierProduct, supplier))
             res.status(repoObject.status).json(repoObject)
         })
         .catch((repoObject) => res.status(repoObject.status).json(repoObject))

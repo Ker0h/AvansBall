@@ -5,6 +5,7 @@
   "password": "example",
   "writeDb": "BalProductWrite",
   "readDb": "BalProductRead",
+  "eventDb": "EventStore",
   "appHost": "localhost",
   "appPort": "8080"
 }

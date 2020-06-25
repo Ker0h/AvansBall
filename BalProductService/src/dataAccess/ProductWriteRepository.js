@@ -1,4 +1,5 @@
 const ProductWrite = require('../schemas/ProductWriteSchema');
+const ApiErrors = require('../errorMessages/Error')
 
 class ProductWriteRepository {
 
@@ -42,11 +43,13 @@ class ProductWriteRepository {
      * @param {String} title The new name of the product.
      * @param {Number} price New price of the product, can be a decimal.
      * @param {String} category New product category of the product.
+     * @param isSupplierProduct
+     * @param supplier
      */
-    static updateProduct(productId, title, price, category) {
+    static updateProduct(productId, title, price, category, isSupplierProduct, supplier) {
         return new Promise((resolve, reject) => {
             ProductWrite.findOneAndUpdate({ _id: productId }, {
-                title, category, price
+                title, category, price, isSupplierProduct, supplier
             }).then(() => resolve({ status: 200, message: " [+] Product updated." }))
                 .catch(() => reject({ status: 500, message: " [-] ERROR: Product not updated." }))
         })

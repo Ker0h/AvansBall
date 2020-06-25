@@ -11,6 +11,3 @@ COPY . .
 
 RUN npm install \
     && npm cache clean --force
-
-# Misschien nog een CMD [] commando
-# Misschien ook niet door de docker-compose file?

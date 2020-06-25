@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const readDb = require('../dbConnection/readConnection').connectionFactory()
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
 const ProductReadSchema = new Schema({
     productId: String,
@@ -12,5 +12,9 @@ const ProductReadSchema = new Schema({
 })
 
 const ProductRead = readDb.model('product_read', ProductReadSchema)
+const ProductSchema = ProductReadSchema
 
-module.exports = ProductRead
+module.exports = {
+    ProductRead,
+    ProductSchema
+}
