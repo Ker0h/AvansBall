@@ -7,7 +7,6 @@ app = Flask(__name__)
 
 @app.route('/order', methods=['POST'])
 def new_order():
-    print("Hellosworld")
 
     customer_id = request.json.get("customer_id", None)
     product_id = request.json.get("product_id", None)
@@ -19,9 +18,18 @@ def new_order():
 
     if type(product_amount) is int:
         new_order = DbFunctions.insert_new_order_writedb(customer_id=customer_id, product_id=product_id,
-                                                 product_amount=product_amount,
-                                                 product_name=product_name)
+                                                         product_amount=product_amount,
+                                                         product_name=product_name)
         if new_order:
+            DbFunctions.add_event("add_new_order_event",
+                                  {"Customer_id": int(customer_id),
+                                   "Product_id": product_id,
+                                   "Product_name": product_name,
+                                   "Product_amount": product_amount})
+            DbFunctions.add_event("update_stock_event",
+                                  {"Product_id": product_id,
+                                   "Product_amount": product_amount}
+                                  )
             return jsonify({"msg": "A new order has been created"}), 201
         else:
             print(new_order.e)
@@ -30,11 +38,20 @@ def new_order():
         for item in product_amount:
             if int(item) <= 0:
                 return jsonify({"msg": "All amounts need to be more than 0"}), 400
-
         new_order = DbFunctions.insert_new_order_writedb(customer_id=customer_id, product_id=product_id,
-                                                 product_amount=product_amount,
-                                                 product_name=product_name)
+                                                         product_amount=product_amount,
+                                                         product_name=product_name)
         if new_order:
+            DbFunctions.add_event("add_new_order_event",
+                                  {"Customer_id": int(customer_id),
+                                   "Product_id": product_id,
+                                   "Product_name": product_name,
+                                   "Product_amount": product_amount})
+            DbFunctions.add_event("update_stock_event",
+                                  {"Product_id": product_id,
+                                   "Product_amount": product_amount}
+                                  )
+
             return jsonify({"msg": "A new order has been created"}), 201
         else:
             print(new_order.e)

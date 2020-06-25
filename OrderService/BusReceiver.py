@@ -11,14 +11,13 @@ channel.queue_declare(queue='new_order')
 
 
 def callback(ch, method, properties, body):
-    print(method.delivery_tag)
     print(" [x] Received %r" % body)
     decoded_message = json.loads(body)
     DbFunctions.insert_new_order_readdb(
-        decoded_message.get("Customer_id"),
-        decoded_message.get("Product_id"),
-        decoded_message.get("Product_name"),
-        decoded_message.get("Product_amount")
+        decoded_message.get("order").get("dictionary").get("Customer_id"),
+        decoded_message.get("order").get("dictionary").get("Product_id"),
+        decoded_message.get("order").get("dictionary").get("Product_name"),
+        decoded_message.get("order").get("dictionary").get("Product_amount")
     )
 
 

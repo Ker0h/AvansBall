@@ -1,6 +1,9 @@
+from datetime import datetime
+
 import pymongo
 
-import BusSender
+from BusSender import BusSender
+from EvenOrderCreated import EventOrderCreated
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 product_db = client["Order_Product"]
@@ -9,18 +12,27 @@ order_write_db = client["Order_Write"]
 order_write_col = order_write_db["order_write"]
 order_read_db = client["Order_Read"]
 order_read_col = order_read_db["order_read"]
+event_db = client["Event_Store"]
+event_col = event_db["event_store"]
 
 
 # Insert a new order into the write database when a new order has been made.
 def insert_new_order_writedb(customer_id, product_id, product_name, product_amount):
     try:
-        new_order = {"Customer_id": int(customer_id),
+
+        new_order_query = {"Customer_id": int(customer_id),
                      "Product_id": product_id,
                      "Product_name": product_name,
                      "Product_amount": product_amount}
+        event_order_created = EventOrderCreated(dictionary=new_order_query)
 
-        order_write_col.insert_one(new_order)
-        BusSender.BusSender.send_new_order_to_bus(BusSender, message=new_order)
+        order_write_col.insert_one(new_order_query)
+        event = {
+            "event": event_order_created.__class__.__name__,
+            "order": event_order_created.__dict__
+        }
+        BusSender.send_new_order_to_bus(BusSender, message=event)
+
         return True
     except Exception as e:
         return False, e
@@ -85,6 +97,19 @@ def delete_product(product_id):
     try:
         delete_query = {"product_id": product_id}
         product_db_col.delete_one(delete_query)
+        return True
+    except Exception as e:
+        return False, e
+
+
+def add_event(event_name, order):
+    try:
+        event_query = {
+            "event_name": event_name,
+            "event_values": order,
+            "timestamp": datetime.now()
+        }
+        event_col.insert_one(event_query)
         return True
     except Exception as e:
         return False, e
