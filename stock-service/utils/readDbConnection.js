@@ -9,7 +9,7 @@ class ReadDbConnection {
     });
     readDb
       .once('open', () => {
-        console.log(` [+] Message: The ${config.readDb} database is connected`);
+        console.log(` [+] Message: The ${config.databases.readDb} database is connected`);
       })
       .on('error', (error) => {
         console.warn(' [*] WARNING: ', error);

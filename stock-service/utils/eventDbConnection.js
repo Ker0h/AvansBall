@@ -4,24 +4,24 @@ const config = require('../config/config.json');
 /**
  * Create connection to write database in mongo
  */
-class WriteDbConnection {
+class EventDbConnection {
   static connectionFactory() {
-    const writeDb = mongoose.createConnection(config.databases.writeDb, {
+    const eventDb = mongoose.createConnection(config.databases.eventDb, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
-    writeDb
+    eventDb
       .once('open', () => {
         console.log(
-          ` [+] Message: The ${config.databases.writeDb} database is connected`
+          ` [+] Message: The ${config.databases.eventDb} database is connected`
         );
       })
       .on('error', (error) => {
         console.warn(' [*] WARNING: ', error);
       });
 
-    return writeDb;
+    return eventDb;
   }
 }
 
-module.exports = WriteDbConnection;
+module.exports = EventDbConnection;

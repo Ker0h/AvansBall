@@ -1,5 +1,5 @@
 const amqp = require('amqplib/callback_api');
-const denormalize = require('../denormalize');
+const Denormalizer = require('../event-listeners/denormalize');
 
 const sendToBus = (event, data) => {
   amqp.connect('amqp://localhost', (error0, connection) => {
@@ -32,7 +32,7 @@ const sendToBus = (event, data) => {
   });
 };
 
-const listenToBus = () => {
+const listenToProducts = () => {
   amqp.connect('amqp://localhost', (error0, connection) => {
     if (error0) {
       throw error0;
@@ -43,21 +43,22 @@ const listenToBus = () => {
         throw error1;
       }
 
-      const queue = 'stock';
+      const queue = 'products';
 
       channel.assertQueue(queue, {
         durable: false
       });
 
       console.log(
-        ' [*] Waiting for messages in %s. To exit press CTRL+C',
+        ' [*] Waiting for messages from %s. To exit press CTRL+C',
         queue
       );
       channel.consume(
         queue,
         (msg) => {
           console.log(' [x] Received %s', msg.content.toString());
-          denormalize(msg);
+          const denormalizer = new Denormalizer();
+          denormalizer.insert(msg);
         },
         {
           noAck: true
@@ -65,6 +66,84 @@ const listenToBus = () => {
       );
     });
   });
+};
+
+const listenToSuppliers = () => {
+  amqp.connect('amqp://localhost', (error0, connection) => {
+    if (error0) {
+      throw error0;
+    }
+
+    connection.createChannel((error1, channel) => {
+      if (error1) {
+        throw error1;
+      }
+
+      const queue = 'suppliers';
+
+      channel.assertQueue(queue, {
+        durable: false
+      });
+
+      console.log(
+        ' [*] Waiting for messages from %s. To exit press CTRL+C',
+        queue
+      );
+      channel.consume(
+        queue,
+        (msg) => {
+          console.log(' [x] Received %s', msg.content.toString());
+          const denormalizer = new Denormalizer();
+          denormalizer.insert(msg);
+        },
+        {
+          noAck: true
+        }
+      );
+    });
+  });
+};
+
+const listenToOrders = () => {
+  amqp.connect('amqp://localhost', (error0, connection) => {
+    if (error0) {
+      throw error0;
+    }
+
+    connection.createChannel((error1, channel) => {
+      if (error1) {
+        throw error1;
+      }
+
+      const queue = 'orders';
+
+      channel.assertQueue(queue, {
+        durable: false
+      });
+
+      console.log(
+        ' [*] Waiting for messages from %s. To exit press CTRL+C',
+        queue
+      );
+      channel.consume(
+        queue,
+        (msg) => {
+          console.log(' [x] Received %s', msg.content.toString());
+          const denormalizer = new Denormalizer();
+          denormalizer.insert(msg);
+        },
+        {
+          noAck: true
+        }
+      );
+    });
+  });
+};
+
+const listenToBus = () => {
+  listenToProducts();
+  listenToSuppliers();
+  listenToOrders();
 };
 
 module.exports = {

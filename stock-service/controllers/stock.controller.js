@@ -2,7 +2,13 @@ const Stock = require('../models/schemas/stock.schema');
 const Errors = require('../errorhandling/errorcodes');
 const ProductAdded = require('../events/productAdded');
 const ProductUpdated = require('../events/productUpdated');
-const ProductDeleted = require('../events/productDeleted')
+const ProductDeleted = require('../events/productDeleted');
+const ProductAmountIncreased = require('../events/productAmountIncreased');
+const ProductAmountDecreased = require('../events/productAmountDecreased');
+const ProductNameChanged = require('../events/productNameChanged');
+const ProductCategoryChanged = require('../events/productCategoryChanged');
+const ProductPriceChanged = require('../events/productPriceChanged');
+
 const AMQP = require('../utils/amqp.util');
 
 const ReadModel = Stock.readStock;
@@ -82,20 +88,163 @@ const updateProduct = (req, res) => {
   if (id === '') {
     const err = Errors.PreconditionFailed();
     res.status(err.code).json(err).end();
-  }  
+  }
 
-  WriteModel.findByIdAndUpdate(id, {name: name, amount: amount, category: category, price: price},
+  WriteModel.findByIdAndUpdate(id, { name: name, amount: amount, category: category, price: price },
     (err, stock) => {
       if (err) {
         res.json(err).end()
-    } else {
+      } else {
         const productUpdated = new ProductUpdated(id, name, amount, category, price)
         AMQP.sendToBus(productUpdated.constructor.name, productUpdated);
 
         res.status(204).json(stock).end()
-    }
+      }
     });
 };
+
+const increaseProductAmount = (req, res) => {
+  const id = req.body.id || '';
+  let amount = req.body.amount || 0;
+
+  if (id === '') {
+    const err = Errors.PreconditionFailed();
+    res.status(err.code).json(err).end();
+  }
+
+  ReadModel.findById(id)
+    .then((stock) => {
+
+      WriteModel.findByIdAndUpdate(id, { amount: stock.amount + amount },
+        (err, stock) => {
+          if (err) {
+            res.json(err).end()
+          } else {
+            const productAmountIncreased = new ProductAmountIncreased(id, amount);
+            AMQP.sendToBus(productAmountIncreased.constructor.name, productAmountIncreased);
+
+            res.status(204).json(stock).end()
+          }
+        });
+    })
+    .catch((error) => {
+      console.log(error)
+      const err = Errors.notFound();
+      res.status(err.code).json(err).end();
+    })
+}
+
+const decreaseProductAmount = (req, res) => {
+  const id = req.body.id || '';
+  let amount = req.body.amount || 0;
+
+  if (id === '') {
+    const err = Errors.PreconditionFailed();
+    res.status(err.code).json(err).end();
+  }
+
+  ReadModel.findById(id)
+    .then((stock) => {
+
+      WriteModel.findByIdAndUpdate(id, { amount: stock.amount - amount },
+        (err, stock) => {
+          if (err) {
+            res.json(err).end()
+          } else {
+            const productAmountDecreased = new ProductAmountDecreased(id, amount);
+            AMQP.sendToBus(productAmountDecreased.constructor.name, productAmountDecreased);
+
+            res.status(204).json(stock).end()
+          }
+        });
+    })
+    .catch((error) => {
+      console.log(error)
+      const err = Errors.notFound();
+      res.status(err.code).json(err).end();
+    })
+}
+
+const changeProductName = (req, res) => {
+  const id = req.body.id || '';
+  const name = req.body.name || '';
+
+  if (id === '') {
+    const err = Errors.PreconditionFailed();
+    res.status(err.code).json(err).end();
+  }
+
+  WriteModel.findByIdAndUpdate(id, { name: name },
+    (err, stock) => {
+      if (err) {
+        res.json(err).end()
+      } else {
+        const productNameChanged = new ProductNameChanged(id, name);
+        AMQP.sendToBus(productNameChanged.constructor.name, productNameChanged);
+
+        res.status(204).json(stock).end()
+      }
+    })
+      .catch((error) => {
+        console.log(error)
+        const err = Errors.notFound();
+        res.status(err.code).json(err).end();
+      })
+}
+
+const changeProductCategory = (req, res) => {
+  const id = req.body.id || '';
+  const category = req.body.category || '';
+
+  if (id === '') {
+    const err = Errors.PreconditionFailed();
+    res.status(err.code).json(err).end();
+  }
+
+  WriteModel.findByIdAndUpdate(id, { category: category },
+    (err, stock) => {
+      if (err) {
+        res.json(err).end()
+      } else {
+        const productcategoryChanged = new ProductCategoryChanged(id, category);
+        AMQP.sendToBus(productCategoryChanged.constructor.name, productCategoryChanged);
+
+        res.status(204).json(stock).end()
+      }
+    })
+      .catch((error) => {
+        console.log(error)
+        const err = Errors.notFound();
+        res.status(err.code).json(err).end();
+      })
+}
+
+const changeProductPrice = (req, res) => {
+  const id = req.body.id || '';
+  const price = req.body.price || '';
+
+  if (id === '') {
+    const err = Errors.PreconditionFailed();
+    res.status(err.code).json(err).end();
+  }
+
+  WriteModel.findByIdAndUpdate(id, { price: price },
+    (err, stock) => {
+      if (err) {
+        res.json(err).end()
+      } else {
+        const productPriceChanged = new ProductPriceChanged(id, price);
+        AMQP.sendToBus(productPriceChanged.constructor.name, productPriceChanged);
+
+        res.status(204).json(stock).end()
+      }
+    })
+      .catch((error) => {
+        console.log(error)
+        const err = Errors.notFound();
+        res.status(err.code).json(err).end();
+      })
+}
 
 const deleteProduct = (req, res) => {
   const id = req.body.id || ''
@@ -107,14 +256,13 @@ const deleteProduct = (req, res) => {
 
   WriteModel.findByIdAndDelete(id, (err, stock) => {
     if (err) {
-        res.json(err).end()
+      res.json(err).end()
     } else {
-        const productDeleted = new ProductDeleted(id)
-        AMQP.sendToBus(productDeleted.constructor.name, productDeleted);
+      const productDeleted = new ProductDeleted(id)
+      AMQP.sendToBus(productDeleted.constructor.name, productDeleted);
 
-        res.status(204).json(stock).end()
+      res.status(204).json(stock).end()
     }
- 
   })
 }
 
@@ -123,5 +271,10 @@ module.exports = {
   getStockByName,
   addProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  increaseProductAmount,
+  decreaseProductAmount,
+  changeProductName,
+  changeProductCategory,
+  changeProductPrice
 };
