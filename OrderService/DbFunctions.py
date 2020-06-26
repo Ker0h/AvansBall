@@ -2,8 +2,8 @@ from datetime import datetime
 
 import pymongo
 
-from BusSender import BusSender
-from EvenOrderCreated import EventOrderCreated
+from Bus.BusSender import BusSender
+from Events.EvenOrderCreated import EventOrderCreated
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 product_db = client["Order_Product"]
@@ -17,22 +17,10 @@ event_col = event_db["event_store"]
 
 
 # Insert a new order into the write database when a new order has been made.
-def insert_new_order_writedb(customer_id, product_id, product_name, product_amount):
+def insert_new_order_writedb(new_order_query, order_event):
     try:
-
-        new_order_query = {"Customer_id": int(customer_id),
-                     "Product_id": product_id,
-                     "Product_name": product_name,
-                     "Product_amount": product_amount}
-        event_order_created = EventOrderCreated(dictionary=new_order_query)
-
         order_write_col.insert_one(new_order_query)
-        event = {
-            "event": event_order_created.__class__.__name__,
-            "order": event_order_created.__dict__
-        }
-        BusSender.send_new_order_to_bus(BusSender, message=event)
-
+        BusSender.send_new_order_to_bus(BusSender, message=order_event)
         return True
     except Exception as e:
         return False, e
@@ -41,10 +29,10 @@ def insert_new_order_writedb(customer_id, product_id, product_name, product_amou
 # Insert an exsisting order that went from the write db to the bus and back to this.
 def insert_new_order_readdb(customer_id, product_id, product_name, product_amount):
     try:
-        new_order = {"Customer_id": int(customer_id),
-                     "Product_id": product_id,
-                     "Product_name": product_name,
-                     "Product_amount": product_amount}
+        new_order = {"customer_id": int(customer_id),
+                     "product_id": product_id,
+                     "product_name": product_name,
+                     "product_amount": product_amount}
 
         order_read_col.insert_one(new_order)
         return True
@@ -70,7 +58,7 @@ def retrieve_customer_orders(customer_id):
 # Insert a new product into the product database.
 def insert_new_product(product_id, product_name, product_amount, product_price):
     try:
-        new_product = {"Product_id": int(product_id),
+        new_product = {"product_id": int(product_id),
                        "name": product_name,
                        "amount": int(product_amount),
                        "price": float(product_price)}
@@ -102,11 +90,11 @@ def delete_product(product_id):
         return False, e
 
 
-def add_event(event_name, order):
+def add_event(event):
     try:
         event_query = {
-            "event_name": event_name,
-            "event_values": order,
+            "event": event.get("event"),
+            "order": event.get("order"),
             "timestamp": datetime.now()
         }
         event_col.insert_one(event_query)

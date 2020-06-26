@@ -14,10 +14,10 @@ def callback(ch, method, properties, body):
     print(" [x] Received %r" % body)
     decoded_message = json.loads(body)
     DbFunctions.insert_new_order_readdb(
-        decoded_message.get("order").get("dictionary").get("Customer_id"),
-        decoded_message.get("order").get("dictionary").get("Product_id"),
-        decoded_message.get("order").get("dictionary").get("Product_name"),
-        decoded_message.get("order").get("dictionary").get("Product_amount")
+        decoded_message.get("order").get("dictionary").get("customer_id"),
+        decoded_message.get("order").get("dictionary").get("product_id"),
+        decoded_message.get("order").get("dictionary").get("product_name"),
+        decoded_message.get("order").get("dictionary").get("product_amount")
     )
 
 

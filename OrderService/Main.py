@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 
 import DbFunctions
+from Events.EvenOrderCreated import EventOrderCreated
+from Events.EventStockUpdated import EventStockUpdated
 
 app = Flask(__name__)
 
@@ -17,19 +19,31 @@ def new_order():
         return jsonify({"msg": "Missing parameters"}), 400
 
     if type(product_amount) is int:
-        new_order = DbFunctions.insert_new_order_writedb(customer_id=customer_id, product_id=product_id,
-                                                         product_amount=product_amount,
-                                                         product_name=product_name)
+
+        new_order_query = {"customer_id": int(customer_id),
+                           "product_id": product_id,
+                           "product_name": product_name,
+                           "product_amount": product_amount}
+        stock_dict = {
+            "product_id": product_id,
+            "product_amount": product_amount
+        }
+        event_order_created = EventOrderCreated(dictionary=new_order_query)
+        event_stock_update = EventStockUpdated(dictionary=stock_dict)
+        order_event = {
+            "event": event_order_created.__class__.__name__,
+            "order": event_order_created.__dict__
+        }
+        stock_event = {
+            "event": event_stock_update.__class__.__name__,
+            "order": event_stock_update.__dict__
+        }
+
+        new_order = DbFunctions.insert_new_order_writedb(new_order_query, order_event)
         if new_order:
-            DbFunctions.add_event("add_new_order_event",
-                                  {"Customer_id": int(customer_id),
-                                   "Product_id": product_id,
-                                   "Product_name": product_name,
-                                   "Product_amount": product_amount})
-            DbFunctions.add_event("update_stock_event",
-                                  {"Product_id": product_id,
-                                   "Product_amount": product_amount}
-                                  )
+
+            DbFunctions.add_event(order_event)
+            DbFunctions.add_event(stock_event)
             return jsonify({"msg": "A new order has been created"}), 201
         else:
             print(new_order.e)
@@ -38,20 +52,30 @@ def new_order():
         for item in product_amount:
             if int(item) <= 0:
                 return jsonify({"msg": "All amounts need to be more than 0"}), 400
-        new_order = DbFunctions.insert_new_order_writedb(customer_id=customer_id, product_id=product_id,
-                                                         product_amount=product_amount,
-                                                         product_name=product_name)
-        if new_order:
-            DbFunctions.add_event("add_new_order_event",
-                                  {"Customer_id": int(customer_id),
-                                   "Product_id": product_id,
-                                   "Product_name": product_name,
-                                   "Product_amount": product_amount})
-            DbFunctions.add_event("update_stock_event",
-                                  {"Product_id": product_id,
-                                   "Product_amount": product_amount}
-                                  )
+        new_order_query = {"customer_id": int(customer_id),
+                           "product_id": product_id,
+                           "product_name": product_name,
+                           "product_amount": product_amount}
+        stock_dict = {
+            "product_id": product_id,
+            "product_amount": product_amount
+        }
+        event_order_created = EventOrderCreated(dictionary=new_order_query)
+        event_stock_update = EventStockUpdated(dictionary=stock_dict)
+        order_event = {
+            "event": event_order_created.__class__.__name__,
+            "order": event_order_created.__dict__
+        }
+        stock_event = {
+            "event": event_stock_update.__class__.__name__,
+            "order": event_stock_update.__dict__
+        }
 
+        new_order = DbFunctions.insert_new_order_writedb(new_order_query, order_event)
+        if new_order:
+
+            DbFunctions.add_event(order_event)
+            DbFunctions.add_event(stock_event)
             return jsonify({"msg": "A new order has been created"}), 201
         else:
             print(new_order.e)

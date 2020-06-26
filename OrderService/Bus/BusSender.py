@@ -38,7 +38,7 @@ class BusSender:
             channel = connection.channel()
             channel.queue_declare(queue="stock")
             print(message)
-            channel.basic_publish(exchange='', routing_key='stock_update', body=JSONEncoder().encode(message))
+            channel.basic_publish(exchange='', routing_key='stock', body=JSONEncoder().encode(message))
         except Exception as e:
             print(repr(e))
             traceback.print_exc()
