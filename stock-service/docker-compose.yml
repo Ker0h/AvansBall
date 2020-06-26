@@ -1,7 +1,9 @@
 version: '2'
 services:
-  example_service:
-    build: .
+  stock_service:
+    build:
+          context: .
+          dockerfile: Stock.Dockerfile
     ports:
       - '8080:8080'
     depends_on:
