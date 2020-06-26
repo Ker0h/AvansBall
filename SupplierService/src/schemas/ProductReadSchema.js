@@ -6,7 +6,9 @@ const ProductReadSchema = new Schema({
     productId: String,
     title: String,
     category: String,
-    price: Number
+    price: Number,
+    isSupplierProduct: Boolean,
+    amount: Number
 })
 
 const ProductRead = readDb.model('product_read', ProductReadSchema)

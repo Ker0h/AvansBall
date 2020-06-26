@@ -26,7 +26,9 @@ class ProductReadRepository {
             productId: product.productId,
             title: product.title,
             category: product.category,
-            price: product.price
+            price: product.price,
+            amount: product.amount,
+            isSupplierProduct: product.isSupplierProduct
         })
 
         newProduct.save()

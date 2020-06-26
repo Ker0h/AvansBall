@@ -7,10 +7,11 @@ RUN apk add --update tini \
 
 WORKDIR /usr/supplier_service
 
-COPY . .
+COPY package*.json ./
 
 RUN npm install \
     && npm cache clean --force
 
-# Misschien nog een CMD [] commando
-# Misschien ook niet door de docker-compose file?
+COPY . .
+
+CMD [ "tini", "--", "node", "./"]

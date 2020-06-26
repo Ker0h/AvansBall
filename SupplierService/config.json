@@ -1,13 +1,13 @@
 {
-    "host": "localhost",
-    "port": "32768",
+    "host": "mongo",
+    "port": "27017",
     "user": "root",
     "password": "example",
     "writeDb": "SupplierWrite",
     "readDb": "SupplierRead",
     "appHost": "localhost",
     "appPort": "8080",
-    "eventStoreHost": "localhost",
-    "eventStorePort": "32768",
+    "eventStoreHost": "mongo",
+    "eventStorePort": "27017",
     "eventStoreDB": "SupplierEventStore"
 }

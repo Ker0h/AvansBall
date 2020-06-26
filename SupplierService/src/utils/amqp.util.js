@@ -4,7 +4,7 @@ const DeNormalizer = require('../routes/de_normalizer')
 class AmqpUtil {
 
     static sendToBus(supplierProduct) {
-        amqp.connect('amqp://localhost', (err, connection) => {
+        amqp.connect('amqp://rabbitmq', (err, connection) => {
             if (err) console.warn(err)
 
             connection.createChannel((channelError, channel) => {
@@ -30,7 +30,7 @@ class AmqpUtil {
     }
 
     static listenToBus() {
-        amqp.connect('amqp://localhost', (err, connection) => {
+        amqp.connect('amqp://rabbitmq', (err, connection) => {
             if (err) console.warn(err)
 
             connection.createChannel((channelError, channel) => {
@@ -44,7 +44,7 @@ class AmqpUtil {
                 console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queueName);
                 channel.consume(queueName, (message) => {
                     console.log(" [+] Received: " + JSON.parse(message.content).event)
-                    var deNormalizer = new DeNormalizer()
+                    let deNormalizer = new DeNormalizer()
                     deNormalizer.insertIntoRead(JSON.parse(message.content))
                 }, {
                     noAck: true

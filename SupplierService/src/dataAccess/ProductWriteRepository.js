@@ -22,10 +22,10 @@ class ProductWriteRepository {
      * @param {Number} price Price of the product, can be a decimal.
      * @param {String} category Product category of the product.
      */
-    static createProduct(title, price, category) {
+    static createProduct(title, price, category, amount) {
         return new Promise((resolve, reject) => {
             const product = new ProductWrite({
-                title, category, price
+                title, category, price, amount
             })
 
             product.save()
@@ -41,10 +41,10 @@ class ProductWriteRepository {
      * @param {Number} price New price of the product, can be a decimal.
      * @param {String} category New product category of the product.
      */
-    static updateProduct(productId, title, price, category) {
+    static updateProduct(productId, title, price, category, amount) {
         return new Promise((resolve, reject) => {
             ProductWrite.findOneAndUpdate({ _id: productId }, {
-                title, category, price
+                title, category, price, amount
             }).then(() => resolve({ status: 200, message: " [+] Supplier product updated." }))
                 .catch(() => reject({ status: 500, message: " [-] ERROR: Product not updated." }))
         })

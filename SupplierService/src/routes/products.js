@@ -30,8 +30,9 @@ router.post('/', (req, res) => {
     const title = req.body.title || ''
     const price = req.body.price || 0
     const category = req.body.category || ''
+    const amount = req.body.amount || 0
 
-    ProductWriteRepository.createProduct(title, price, category)
+    ProductWriteRepository.createProduct(title, price, category, amount)
         .then((repoObject) => {
             amqpUtils.sendToBus(
                 new SupplierProductCreated(repoObject.product._id, repoObject.product.title, repoObject.product.price, repoObject.product.category)

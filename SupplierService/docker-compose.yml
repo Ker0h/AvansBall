@@ -1,22 +1,30 @@
 version: '3.1'
 
 services:
-    supplier_service:
-        build:
-            context: .
-            dockerfile: supplier.Dockerfile
+    rabbitmq:
+        image: rabbitmq:3-management
         ports:
-            - 8080:3000
-        volumes: 
-            - mongo-db-config:/data/configdb
-            - mongo-db-data:/data/db
-            # Misschien nog een eigen volume? idk
+            - 5672:5672
+            - 15672:15672
     mongo:
         image: mongo
         restart: always
         environment: 
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: example
+    supplier_service:
+        restart: always
+        build:
+            context: .
+            dockerfile: Supplier.Dockerfile
+        ports:
+            - 8080:3000
+        depends_on: 
+            - "rabbitmq"
+            - "mongo"
+        volumes: 
+            - mongo-db-config:/data/configdb
+            - mongo-db-data:/data/db
 
 volumes: 
     mongo-db-config:
