@@ -1,12 +1,12 @@
 FROM node:10
 
-# Create app directory
-WORKDIR /usr/src/app
+EXPOSE 3000
 
-# Install app dependencies
-COPY package*.json ./
-RUN npm install
+WORKDIR /usr/stock_service
 
 COPY . .
-EXPOSE 8080
+
+RUN npm install \
+    && npm cache clean --force
+
 CMD [ "node", "server.js" ]
