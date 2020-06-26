@@ -1,0 +1,48 @@
+version: '3.1'
+
+services:
+    rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+            - 5672:5672
+            - 15672:15672
+    supplier_service_db:
+        image: mongo
+        restart: always
+        ports:
+            - 27011:27017
+        # environment: 
+        #     MONGO_INITDB_ROOT_USERNAME: root
+        #     MONGO_INITDB_ROOT_PASSWORD: example
+    supplier_service:
+        restart: always
+        build:
+            context: .
+            dockerfile: ./SupplierService/Supplier.Dockerfile
+        ports:
+            - 8080:3000
+        depends_on: 
+            - rabbitmq
+            - supplier_service_db
+        volumes: 
+            - mongo-db-config:/data/configdb
+            - mongo-db-data:/data/db
+    # stock_service_db:
+    #     image: mongo
+    #     restart: always
+    #     ports:
+    #         - 27012:27017
+    # stock_service:
+    #     restart: always
+    #     build:
+    #         context: .
+    #         dockerfile: ./stock-service/Stock.Dockerfile
+    #     ports:
+    #         - '8081:8080'
+    #     depends_on:
+    #         - stock_service_db
+    #         - rabbitmq
+
+volumes: 
+    mongo-db-config:
+    mongo-db-data:

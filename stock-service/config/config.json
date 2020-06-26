@@ -1,8 +1,8 @@
 {
-  "port": 8181,
+  "port": 8081,
   "databases": {
-    "writeDb": "mongodb://localhost/stock-write",
-    "readDb": "mongodb://localhost/stock-read",
-    "eventDb": "mongodb://localhost/stock-events"
+    "writeDb": "mongodb://stock_service_db/stock-write",
+    "readDb": "mongodb://stock_service_db/stock-read",
+    "eventDb": "mongodb://stock_service_db/stock-events"
   }
 }

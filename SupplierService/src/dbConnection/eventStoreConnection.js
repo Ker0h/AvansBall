@@ -7,7 +7,10 @@ const config = require('../../config.json')
 class EventStoreDbConnection {
 
     static connectionFactory() {
-        const eventStoreDb = mongoose.createConnection('mongodb://' + config.eventStoreHost + ':' + config.eventStorePort + '/' + config.eventStoreDB, { useNewUrlParser: true, useUnifiedTopology: true })
+        const eventStoreDb = mongoose.createConnection('mongodb://' + config.eventStoreHost + ':' + config.eventStorePort + '/' + config.eventStoreDB, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        })
         eventStoreDb.once('open', () => {
             console.log(' [+] Message: The ' + config.eventStoreDB + ' database is connected')
         }).on('error', (error) => {

@@ -7,11 +7,11 @@ RUN apk add --update tini \
 
 WORKDIR /usr/supplier_service
 
-COPY package*.json ./
+COPY ./SupplierService/package*.json ./
 
 RUN npm install \
     && npm cache clean --force
 
-COPY . .
+COPY ./SupplierService .
 
 CMD [ "tini", "--", "node", "./"]
