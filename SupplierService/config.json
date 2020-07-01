@@ -1,13 +1,12 @@
 {
     "host": "mongo",
     "port": "27017",
-    "user": "root",
-    "password": "example",
     "writeDb": "SupplierWrite",
     "readDb": "SupplierRead",
     "appHost": "localhost",
     "appPort": "8080",
     "eventStoreHost": "mongo",
     "eventStorePort": "27017",
-    "eventStoreDB": "SupplierEventStore"
+    "eventStoreDB": "SupplierEventStore",
+    "rabbitMqUrl": "amqp://rabbitmq"
 }

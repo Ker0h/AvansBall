@@ -1,17 +1,14 @@
-FROM node:current-alpine3.11
+FROM node:current-alpine3.12
 
-EXPOSE 3000
-
-RUN apk add --update tini \
-    && mkdir -p /usr/supplier_service/
+RUN mkdir -p /usr/supplier_service/
 
 WORKDIR /usr/supplier_service
 
-COPY package*.json ./
+COPY . .
 
 RUN npm install \
     && npm cache clean --force
 
-COPY . .
+EXPOSE 3000
 
-CMD [ "tini", "--", "node", "./"]
+CMD [ "npm", "start"]
